@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 310, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 102, in main
+    graph, N, hi_f, hi_s, hi = make_graph_and_hilbert(Lx=Lx,Ly=Ly, n_fermions=Ne,pbc=pbc)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: make_graph_and_hilbert() got an unexpected keyword argument 'Lx'

@@ -1,0 +1,13 @@
+{
+  "os": "macOS-13.4-arm64-arm-64bit",
+  "python": "CPython 3.12.2",
+  "startedAt": "2026-04-07T13:48:43.222768Z",
+  "program": "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py",
+  "codePath": "kondo_run.py",
+  "codePathLocal": "kondo_run.py",
+  "email": "nikolajenko14@gmail.com",
+  "root": "/Users/alexander/Documents/projects/NetKet/Kondo_model",
+  "host": "dhcp-10-250-143-112.harvard.edu",
+  "executable": "/usr/local/bin/python3",
+  "writerId": "ar97xow309dta3swgckbu4a3s9gi8c8x"
+}

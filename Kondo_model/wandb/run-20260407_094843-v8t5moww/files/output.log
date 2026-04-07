@@ -1,0 +1,36 @@
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/graph/common_lattices.py:126: InitializePeriodicLatticeOnSmallLatticeWarning:
+You are attempting to define a lattice with length 1 in dimension 1 using periodic boundary condition.
+
+Lattice with less than two sites in one direction does not support periodic boundary condition.
+The behavior of the lattice is equivalent to an open boundary condition in this direction.
+
+To avoid this warning, consider either using a lattice with more than two sites in the direction you want to be periodic,
+or define the graph using :class:`~netket.graph.Graph` by adding the edges manually.
+
+
+-------------------------------------------------------
+For more detailed informations, visit the following link:
+	 https://netket.readthedocs.io/en/latest/api/_generated/errors/netket.errors.InitializePeriodicLatticeOnSmallLatticeWarning.html
+or the list of all common errors and warnings at
+	 https://netket.readthedocs.io/en/latest/api/errors.html
+-------------------------------------------------------
+
+  warnings.warn(
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 310, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 102, in main
+    graph, N, hi_f, hi_s, hi = make_graph_and_hilbert(Lx=Lx,Ly=Ly, n_fermions=Ne,pbc=pbc)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_hamiltonian.py", line 10, in make_graph_and_hilbert
+    graph = nk.graph.Grid(extent=[Lx,Ly], pbc=pbc)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/graph/common_lattices.py", line 134, in Grid
+    return Lattice(
+           ^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/graph/lattice.py", line 318, in __init__
+    colored_edges = get_nn_edges(
+                    ^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/graph/_lattice_edge_logic.py", line 129, in get_nn_edges
+    raise RuntimeError(
+RuntimeError: Lattice contains self-referential edge (np.int64(3), np.int64(3)) of order 0

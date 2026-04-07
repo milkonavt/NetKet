@@ -1,0 +1,101 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            a6ntdri7pg5vo1gb3athzcdooqc6rdal:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 16
+                    memoryGb: 16
+                    name: Apple M2 Pro
+                    pcpuCores: 6
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "9663676416"
+                codePath: kondo_run.py
+                codePathLocal: kondo_run.py
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "366714724352"
+                email: nikolajenko14@gmail.com
+                executable: /usr/local/bin/python3
+                host: dhcp-10-250-143-112.harvard.edu
+                memory:
+                    total: "17179869184"
+                os: macOS-13.4-arm64-arm-64bit
+                program: /Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py
+                python: CPython 3.12.2
+                root: /Users/alexander/Documents/projects/NetKet/Kondo_model
+                startedAt: "2026-04-07T14:02:21.069364Z"
+                writerId: a6ntdri7pg5vo1gb3athzcdooqc6rdal
+        m: []
+        python_version: 3.12.2
+        t:
+            "1":
+                - 12
+                - 45
+                - 105
+            "2":
+                - 12
+                - 45
+                - 105
+            "3":
+                - 13
+                - 16
+            "4": 3.12.2
+            "5": 0.25.1
+            "12": 0.25.1
+            "13": darwin-arm64
+hamiltonian:
+    value:
+        J: 0.5
+        Jk: 1.5
+        U: 0
+        t: 1
+model:
+    value:
+        d_model: 6
+        n_heads: 6
+        num_layers: 1
+        patch_size: 1
+        transl_invariant: true
+optimizer:
+    value:
+        diag_shift: 0.0001
+        learning_rate: 0.01
+        mode: real
+        on_the_fly: true
+        use_ntk: true
+paths:
+    value:
+        data: /n/home03/onikolaenko/NetKet/Kondo_model/data
+        measurement: /n/home03/onikolaenko/NetKet/Kondo_model/measurement
+sampler:
+    value:
+        chunk_size: 8192
+        d_max: 2
+        n_chains: 8192
+        n_discard_per_chain: 0
+        n_samples: 8192
+        rule_probabilities:
+            - 0.33333333
+            - 0.33333333
+            - 0.33333333
+system:
+    value:
+        Lx: 2
+        Ly: 2
+        Ne: 4
+        n_bands: 3
+        pbc: true
+training:
+    value:
+        init_seed: 1234
+        n_iter: 10
+        seed: 0
+wandb:
+    value:
+        project: kondo-netket
+        use_wandb: true

@@ -1,0 +1,53 @@
+# config.yaml
+
+paths:
+  cluster: true
+  measurement_cluster: "/n/home03/onikolaenko/NetKet/Kondo_model/measurement"
+  data_cluster: "/n/home03/onikolaenko/NetKet/Kondo_model/data"
+  measurement_local: '/Users/alexander/Documents/projects/NetKet/Kondo_model/measurement'
+  data_local: '/Users/alexander/Documents/projects/NetKet/Kondo_model/data'
+
+system:
+  Lx: 4
+  Ly: 4
+  Ne: 16
+  n_bands: 3
+  pbc: true
+
+hamiltonian:
+  t: 1.0
+  U: 0.0
+  Jk: 1.5
+  J: 0.5
+
+model:
+  n_heads: 12
+  d_model: 72
+  num_layers: 4
+  patch_size: 1
+  transl_invariant: true
+
+
+sampler:
+  n_samples: 8192
+  n_chains: 8192
+  n_discard_per_chain: 0
+  chunk_size: 8192
+  d_max: 2
+  rule_probabilities: [0.33333333, 0.33333333, 0.33333333]
+
+optimizer:
+  learning_rate: 0.01
+  diag_shift: 1.0e-4
+  use_ntk: true
+  mode: "real"
+  on_the_fly: true
+
+training:
+  seed: 0
+  init_seed: 1234
+  n_iter: 10000
+
+wandb:
+  project: "kondo-netket"
+  use_wandb: true

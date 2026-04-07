@@ -1,0 +1,47 @@
+********************************************************************************
+******************** New calculation started. The local time is: ********************
+System: 4x4 lattice with 4 sites
+Fermions: 4
+Parameters: t=1, U=0
+
+embedded_configs.shape = (4, 4, 6)
+attention_vectors.shape = (4, 4, 6)
+Multihead atteniton shape =  (4, 4, 6)
+log_psi.shape = (4,)
+Number of parameters =  690
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+  0%|          | 0/100 [00:00<?, ?it/s]/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_fermion2nd/jax.py:566: UserWarning:
+WARNING: Initializing `netket.operator.FermionOperator2nd` for a Hilbert space with a fixed number of fermions.
+Consider using `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd` to reduce the number of connected elements and
+considerably reduce the computational cost.
+You can convert this operator by calling `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd`.
+
+  super()._setup(self)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_fermion2nd/jax.py:566: UserWarning:
+WARNING: Initializing `netket.operator.FermionOperator2nd` for a Hilbert space with a fixed number of fermions.
+Consider using `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd` to reduce the number of connected elements and
+considerably reduce the computational cost.
+You can convert this operator by calling `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd`.
+
+  super()._setup(self)
+dict_keys(['Energy', 'acceptance', 'wallclock', 'info', 'Energy_ema'])
+-0.389-0.000j ± 0.039 [σ²=1.3e+01]
+  0%|          | 0/100 [00:10<?, ?it/s]
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 286, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 254, in main
+    vmc.run(n_iter=N_opt, out=log, callback=wb_callback)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/driver/abstract_variational_driver.py", line 492, in run
+    raise error
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/driver/abstract_variational_driver.py", line 471, in run
+    callbacks.before_parameter_update(
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/callbacks/callback_list.py", line 40, in before_parameter_update
+    callback.before_parameter_update(step, log_data, driver)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/callbacks/legacy_wrappers.py", line 30, in before_parameter_update
+    do_continue = self.callback(step, log_data, driver)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 250, in wb_callback
+    wandb.log({"iteration": step, "energy": float(log_data["Energy"]["Mean"])})
+                                                  ~~~~~~~~~~~~~~~~~~^^^^^^^^
+TypeError: 'Stats' object is not subscriptable

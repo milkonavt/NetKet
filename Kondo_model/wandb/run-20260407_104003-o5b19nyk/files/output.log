@@ -1,0 +1,25 @@
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/graph/common_lattices.py:126: InitializePeriodicLatticeOnSmallLatticeWarning:
+You are attempting to define a lattice with length 2 in dimension 0 using periodic boundary condition.
+
+Lattice with less than two sites in one direction does not support periodic boundary condition.
+The behavior of the lattice is equivalent to an open boundary condition in this direction.
+
+To avoid this warning, consider either using a lattice with more than two sites in the direction you want to be periodic,
+or define the graph using :class:`~netket.graph.Graph` by adding the edges manually.
+
+
+-------------------------------------------------------
+For more detailed informations, visit the following link:
+	 https://netket.readthedocs.io/en/latest/api/_generated/errors/netket.errors.InitializePeriodicLatticeOnSmallLatticeWarning.html
+or the list of all common errors and warnings at
+	 https://netket.readthedocs.io/en/latest/api/errors.html
+-------------------------------------------------------
+
+  warnings.warn(
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 269, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 82, in main
+    H = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(H)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'ParticleNumberAndSpinConservingFermioperator2nd' is not defined

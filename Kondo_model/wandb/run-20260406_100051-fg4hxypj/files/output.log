@@ -1,0 +1,19 @@
+********************************************************************************
+******************** New calculation started. The local time is: ********************
+System: 4x4 lattice with 4 sites
+Fermions: 4
+Parameters: t=1, U=0
+
+embedded_configs.shape = (4, 4, 6)
+attention_vectors.shape = (4, 4, 6)
+Multihead atteniton shape =  (4, 4, 6)
+log_psi.shape = (4,)
+Number of parameters =  690
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 286, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 248, in main
+    vmc.advance()
+    ^^^^^^^^^^^
+AttributeError: 'VMC_SR' object has no attribute 'advance'

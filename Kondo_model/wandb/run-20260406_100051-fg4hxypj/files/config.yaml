@@ -1,0 +1,64 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            46au9xt92qh1dded2ut1rtdlao8947yu:
+                apple:
+                    ecpuCores: 4
+                    gpuCores: 16
+                    memoryGb: 16
+                    name: Apple M2 Pro
+                    pcpuCores: 6
+                    ramTotalBytes: "17179869184"
+                    swapTotalBytes: "9663676416"
+                codePath: kondo_run.py
+                codePathLocal: kondo_run.py
+                cpu_count: 10
+                cpu_count_logical: 10
+                disk:
+                    /:
+                        total: "494384795648"
+                        used: "357937340416"
+                email: nikolajenko14@gmail.com
+                executable: /usr/local/bin/python3
+                host: dhcp-10-250-143-112.harvard.edu
+                memory:
+                    total: "17179869184"
+                os: macOS-13.4-arm64-arm-64bit
+                program: /Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py
+                python: CPython 3.12.2
+                root: /Users/alexander/Documents/projects/NetKet/Kondo_model
+                startedAt: "2026-04-06T14:00:51.741279Z"
+                writerId: 46au9xt92qh1dded2ut1rtdlao8947yu
+        m: []
+        python_version: 3.12.2
+        t:
+            "1":
+                - 12
+                - 45
+                - 105
+            "2":
+                - 12
+                - 45
+                - 105
+            "3":
+                - 13
+                - 16
+            "4": 3.12.2
+            "5": 0.25.1
+            "12": 0.25.1
+            "13": darwin-arm64
+J:
+    value: 0.5
+Jk:
+    value: 1.5
+L:
+    value: 4
+Ne:
+    value: 4
+U:
+    value: 0
+n_samples:
+    value: 8192
+t:
+    value: 1
