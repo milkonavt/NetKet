@@ -218,6 +218,70 @@ class OuputHeadDet(nn.Module):
         log_det =_log_det(A)
         return log_det
 
+def MSR_parity_fn_1layer(spins, Lx=None, Ly=None):
+    """
+    Compute MSR parity = N_down^A mod 2 for a single-layer 2D lattice.
+
+    Parameters
+    ----------
+    spins : array-like, shape (batch, Ltot)
+        Flattened configuration. This function assumes the physical spin sector
+        is stored in the last third of the vector, i.e. spins[:, 2*L : 3*L].
+    Lx, Ly : int, optional
+        Lattice dimensions. If omitted, infer square lattice.
+
+    Returns
+    -------
+    parity : array, shape (batch,)
+        0 or 1
+    """
+
+    if spins.ndim != 2:
+        raise ValueError(
+            f"MSR_parity_fn_1layer expects spins with shape (batch, Ltot), got {spins.shape}"
+        )
+
+    B, Ltot = spins.shape
+
+    if Ltot % 3 != 0:
+        raise ValueError(
+            f"Expected Ltot to be divisible by 3, got Ltot={Ltot} for shape {spins.shape}"
+        )
+
+    L = Ltot // 3
+
+    # keep only the last third
+    spins = spins[:, 2 * L :]   # shape (B, L)
+
+    if spins.shape[1] != L:
+        raise ValueError(
+            f"After slicing expected shape (batch, {L}), got {spins.shape}"
+        )
+
+    if Lx is None or Ly is None:
+        s = int(L ** 0.5)
+        if s * s != L:
+            raise ValueError(
+                f"Cannot infer square lattice from L={L}. Please provide Lx and Ly."
+            )
+        Lx = Ly = s
+
+    if Lx * Ly != L:
+        raise ValueError(
+            f"Lx*Ly must equal L. Got Lx={Lx}, Ly={Ly}, L={L}, shape={spins.shape}"
+        )
+
+    # reshape single-layer spins to (batch, x, y)
+    spins_xy = rearrange(spins, "b (x y) -> b x y", x=Lx, y=Ly)
+
+    xs = jnp.arange(Lx)[:, None]
+    ys = jnp.arange(Ly)[None, :]
+    mask_A = ((xs + ys) % 2) == 0   # A sublattice
+
+    down_on_A = (spins_xy == -1) & mask_A
+    N_down_A = down_on_A.sum(axis=(1, 2))
+
+    return N_down_A % 2
 
 class ViT(nn.Module):
     num_layers: int  # number of layers
@@ -228,7 +292,6 @@ class ViT(nn.Module):
     Ns: int
     n_bands: int
     transl_invariant: bool = False
-
 
 
     @nn.compact
@@ -253,4 +316,4 @@ class ViT(nn.Module):
 
         log_psi = OuputHeadDet(d_model=self.d_model,Ne=self.Ne,Ns=Ns,dtype=jnp.float64)(y,R)
 
-        return log_psi
+        return log_psi+1j * jnp.pi * MSR_parity_fn_1layer(spins)

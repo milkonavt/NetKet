@@ -4,8 +4,8 @@
 #SBATCH --ntasks-per-node=4
 #SBATCH --gres=gpu:4
 #SBATCH -p gpu_h200
-#SBATCH --mem-per-gpu=140G
-#SBATCH -t 0-02:00:00
+#SBATCH --mem-per-gpu=240G
+#SBATCH -t 0-01:00:00
 #SBATCH --output=/n/home03/onikolaenko/NetKet/Kondo_model/logs/slurm-%j.out
 
 export WANDB_API_KEY="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"

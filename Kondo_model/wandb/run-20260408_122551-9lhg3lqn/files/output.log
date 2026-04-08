@@ -1,0 +1,17 @@
+********************************************************************************
+******************** New calculation started. The local time is: ********************
+System: 4x4 lattice with 16 sites
+Fermions: 16
+Parameters: t=1.0, U=0.0
+
+embedded_configs.shape = (4, 16, 72)
+attention_vectors.shape = (4, 16, 72)
+Multihead attention shape = (4, 16, 72)
+log_psi.shape = (4,)
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_measure.py", line 260, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_measure.py", line 253, in main
+    with open(
+         ^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/n/home03/onikolaenko/NetKet/Kondo_model/measurement/state_after_VMC_J=0.500_Jk=1.500_Lx=4_Ly=4_Ne=16_iter=5000.txt'

@@ -1,0 +1,37 @@
+{
+  "os": "macOS-13.4-arm64-arm-64bit",
+  "python": "CPython 3.12.2",
+  "startedAt": "2026-04-07T21:58:35.694617Z",
+  "program": "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py",
+  "codePath": "Kondo_model/kondo_run.py",
+  "codePathLocal": "kondo_run.py",
+  "git": {
+    "remote": "https://github.com/milkonavt/NetKet.git",
+    "commit": "8d71430c47ce19923411b9161552b40e2691f727"
+  },
+  "email": "nikolajenko14@gmail.com",
+  "root": "/Users/alexander/Documents/projects/NetKet/Kondo_model",
+  "host": "dhcp-10-250-143-112.harvard.edu",
+  "executable": "/usr/local/bin/python3",
+  "cpu_count": 10,
+  "cpu_count_logical": 10,
+  "disk": {
+    "/": {
+      "total": "494384795648",
+      "used": "368279867392"
+    }
+  },
+  "memory": {
+    "total": "17179869184"
+  },
+  "apple": {
+    "name": "Apple M2 Pro",
+    "ecpuCores": 4,
+    "pcpuCores": 6,
+    "gpuCores": 16,
+    "memoryGb": 16,
+    "swapTotalBytes": "6442450944",
+    "ramTotalBytes": "17179869184"
+  },
+  "writerId": "wsup02jbafl1hx7mv2mmjgdldc1xn1hl"
+}

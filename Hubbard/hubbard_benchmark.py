@@ -35,10 +35,10 @@ total_start_time = time.time()
 now = datetime.datetime.now()
 
 
-L = 4    # Side of the square
+L = 8  # Side of the square
 t=1;
 U=8
-n_fermions_per_spin = (7,7)
+n_fermions_per_spin = (28,28)
 
 
 graph = nk.graph.Square(L)
@@ -424,7 +424,7 @@ ham_conn = hubbard_model(t, U, graph,        hi)
 
 
 H = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(ham_conn)
-
+H=ham_conn
 
 
 # Define a Metropolis exchange sampler
@@ -467,7 +467,7 @@ vmc = nk.driver.VMC_SR(
 # Optimization
 log = nk.logging.RuntimeLog()
 
-N_opt = 100
+N_opt = 500
 vmc.run(n_iter=N_opt, out=log)
 
 

@@ -136,10 +136,10 @@ def build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk: float):
 def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
     Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
 
-    Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
-    SdotS = build_local_kondo_matrix()
-    Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
+    # Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
+    # SdotS = build_local_kondo_matrix()
+    # Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
+    #
+    # H = Hs_big + Hf_big + Hk
 
-    H = Hs_big + Hf_big + Hk
-
-    return H
+    return Hf_big

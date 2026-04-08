@@ -1,10 +1,11 @@
 import os
+
 os.environ["NETKET_EXPERIMENTAL_SHARDING"] = "1"
-import yaml
+
 import sys
 import time
 import jax
-jax.distributed.initialize()
+# jax.distributed.initialize()
 
 import wandb
 import jax.numpy as jnp
@@ -13,6 +14,7 @@ import netket.operator
 import numpy as np
 import flax
 import optax
+from flax.serialization import from_bytes
 
 from kondo_hamiltonian import make_graph_and_hilbert, build_hamiltonian
 from Embedding import Embed, FMHA, Encoder, ViT
@@ -22,7 +24,6 @@ import experiment_config as conf
 
 from jax.nn.initializers import lecun_normal
 from typing import Any
-
 
 DType = Any
 default_kernel_init = lecun_normal()
@@ -50,10 +51,9 @@ def maybe_log_wandb(payload):
         wandb.log(payload)
 
 
-def make_wb_callback(n_sites,lr_schedule):
+def make_wb_callback(n_sites, lr_schedule):
     last_time = time.perf_counter()
     start_time = last_time
-
 
     def wb_callback(step, log_data, driver):
         nonlocal last_time
@@ -112,7 +112,7 @@ def main():
     )
 
     key = jax.random.key(conf.seed)
-    trial_state = hi.random_state(key, size=5)
+    trial_state = hi.random_state(key, size=4)
 
     H = build_hamiltonian(
         hi_f,
@@ -233,7 +233,6 @@ def main():
 
     optimizer = nk.optimizer.Sgd(learning_rate=lr_schedule)
 
-    key, subkey = jax.random.split(key, 2)
     vstate = nk.vqs.MCState(
         sampler=sampler,
         model=vit_module,
@@ -244,84 +243,70 @@ def main():
         chunk_size=conf.chunk_size,
     )
 
-    sigma0 = make_sz0_initial_states(
-        N=N,
-        n_fermions=conf.Ne,
-        n_chains=sampler.n_chains,
-        seed=conf.init_seed,
-    )
-    vstate.sampler_state = vstate.sampler_state.replace(σ=sigma0)
-
-    N_params = nk.jax.tree_size(vstate.parameters)
-    if is_main_process():
-        print("Number of parameters =", N_params, flush=True)
-
-    vmc = nk.driver.VMC_SR(
-        hamiltonian=H,
-        optimizer=optimizer,
-        diag_shift=conf.diag_shift,
-        variational_state=vstate,
-        mode=conf.mode,
-        on_the_fly=conf.on_the_fly,
-        use_ntk=conf.use_ntk,
+    state_filename = (
+        f"{conf.path_w}/state_after_VMC_"
+        f"J={conf.J:.3f}_Jk={conf.Jk:.3f}_"
+        f"Lx={conf.Lx:d}_Ly={conf.Ly:d}_Ne={conf.Ne:d}_iter={conf.N_opt:d}.txt"
     )
 
-    log = nk.logging.RuntimeLog()
-    callback = make_wb_callback(N,lr_schedule)
-    vmc.run(
-        n_iter=conf.N_opt,
-        out=log,
-        callback=callback,
-    )
 
-    energy_history = np.asarray(log.data["Energy"]["Mean"].real)
-    full_energy = energy_history[-1]
-    runtime = time.time() - total_start_time
+    with open(
+            state_filename,
+            "rb",
+    ) as file:
+        vstate = from_bytes(vstate, file.read())
 
-    # Save only once
-    if is_main_process():
-        config_filename = (
-            f"{conf.path_w}/config_"
-            f"J={conf.J:.3f}_Jk={conf.Jk:.3f}_"
-            f"Lx={conf.Lx:d}_Ly={conf.Ly:d}_Ne={conf.Ne:d}_iter={conf.N_opt:d}.yaml"
-        )
+    order = ['E', 'CC', 'NN']
 
-        with open(config_filename, "w") as f:
-            yaml.dump(conf.cfg, f)
+    if 'NN' in order:
 
+        N = np.zeros((graph.n_nodes,), dtype=float)
 
+        for i in graph.nodes():
+            N_op = nc(hi, i, 1) + nc(hi, i, -1)
+            N_op = N_op.to_jax_operator()
+            N_op = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(N_op)
+            N[i] = vstate.expect(N_op).mean.real
 
-        state_filename = (
-            f"{conf.path_w}/state_after_VMC_"
-            f"J={conf.J:.3f}_Jk={conf.Jk:.3f}_"
-            f"Lx={conf.Lx:d}_Ly={conf.Ly:d}_Ne={conf.Ne:d}_iter={conf.N_opt:d}.txt"
-        )
+        print(N)
+        np.savetxt('{path:s}/N_U={U:.3f}_L={L:d}_Ne={Ne:d}_iter={N_opt:d}.txt'.format(path=path_w, U=U, L=L,
+                                                                                      N_opt=N_opt, Ne=Ne), N)
 
-        with open(state_filename, "wb") as file:
-            file.write(flax.serialization.to_bytes(vstate))
+        NN_full = np.zeros((graph.n_nodes, graph.n_nodes), dtype=float)
+        NN_conn = np.zeros((graph.n_nodes, graph.n_nodes), dtype=float)
 
-        energy_filename = (
-            f"{conf.path_w}/energy_"
-            f"J={conf.J:.3f}_Jk={conf.Jk:.3f}_"
-            f"Lx={conf.Lx:d}_Ly={conf.Ly:d}_Ne={conf.Ne:d}_iter={conf.N_opt:d}.txt"
-        )
-        np.savetxt(energy_filename, energy_history)
+        for i in graph.nodes():
+            for j in graph.nodes():
+                NN_op = (nc(hi, i, 1) + nc(hi, i, -1)) @ (nc(hi, j, 1) + nc(hi, j, -1))
+                NN_op = NN_op.to_jax_operator()
+                NN_op = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(NN_op)
+                NN_full[i, j] = vstate.expect(NN_op).mean.real
+                NN_conn[i, j] = NN_full[i, j] - N[i] * N[j]
 
-        print(f"Optimized energy : {full_energy}")
-        print(f"number of parameters : {int(N_params)}")
-        print("total time cost is", runtime)
+        np.savetxt('{path:s}/NN_full_U={U:.3f}_L={L:d}_Ne={Ne:d}_iter={N_opt:d}.txt'.format(path=path_w, U=U, L=L,
+                                                                                            N_opt=N_opt, Ne=Ne),
+                   NN_full)
 
+        np.savetxt('{path:s}/NN_U={U:.3f}_L={L:d}_Ne={Ne:d}_iter={N_opt:d}.txt'.format(path=path_w, U=U, L=L,
+                                                                                       N_opt=N_opt, Ne=Ne), NN_conn)
 
+    if 'CC' in order:
 
+        CC = np.zeros((graph.n_nodes, graph.n_nodes), dtype=float)
 
+        for i in graph.nodes():
+            for j in graph.nodes():
+                CC_op = (cdag(hi, i, 1)) @ (c(hi, j, 1))
+                CC_op = CC_op.to_jax_operator()
+                CC_op = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(CC_op)
+                CC[i, j] = vstate.expect(CC_op).mean.real
+                print(CC[i, j])
 
-    # maybe_log_wandb(
-    #     {
-    #         "final_energy": float(full_energy),
-    #         "n_parameters": int(N_params),
-    #         "runtime": runtime,
-    #     }
-    # )
+        np.savetxt('{path:s}/CC_U={U:.3f}_L={L:d}_Ne={Ne:d}_iter={N_opt:d}.txt'.format(path=path_w, U=U, L=L,
+                                                                                       N_opt=N_opt, Ne=Ne), CC)
+
+        end = time.time()
+        print(f"Execution time: {end - start:.3f} seconds")
 
 
 if __name__ == "__main__":

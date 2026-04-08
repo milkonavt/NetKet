@@ -1,0 +1,65 @@
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/graph/common_lattices.py:126: InitializePeriodicLatticeOnSmallLatticeWarning:
+You are attempting to define a lattice with length 2 in dimension 0 using periodic boundary condition.
+
+Lattice with less than two sites in one direction does not support periodic boundary condition.
+The behavior of the lattice is equivalent to an open boundary condition in this direction.
+
+To avoid this warning, consider either using a lattice with more than two sites in the direction you want to be periodic,
+or define the graph using :class:`~netket.graph.Graph` by adding the edges manually.
+
+
+-------------------------------------------------------
+For more detailed informations, visit the following link:
+	 https://netket.readthedocs.io/en/latest/api/_generated/errors/netket.errors.InitializePeriodicLatticeOnSmallLatticeWarning.html
+or the list of all common errors and warnings at
+	 https://netket.readthedocs.io/en/latest/api/errors.html
+-------------------------------------------------------
+
+  warnings.warn(
+********************************************************************************
+******************** New calculation started. The local time is: ********************
+System: 2x2 lattice with 4 sites
+Fermions: 2
+Parameters: t=1.0, U=0.0
+
+embedded_configs.shape = (4, 4, 12)
+attention_vectors.shape = (4, 4, 12)
+Multihead attention shape = (4, 4, 12)
+log_psi.shape = (4,)
+Number of parameters = 1908
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+  0%|          | 0/5000 [00:00<?, ?it/s]/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_fermion2nd/jax.py:566: UserWarning:
+WARNING: Initializing `netket.operator.FermionOperator2nd` for a Hilbert space with a fixed number of fermions.
+Consider using `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd` to reduce the number of connected elements and
+considerably reduce the computational cost.
+You can convert this operator by calling `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd`.
+
+  super()._setup(self)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_fermion2nd/jax.py:566: UserWarning:
+WARNING: Initializing `netket.operator.FermionOperator2nd` for a Hilbert space with a fixed number of fermions.
+Consider using `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd` to reduce the number of connected elements and
+considerably reduce the computational cost.
+You can convert this operator by calling `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd`.
+
+  super()._setup(self)
+step=0 dt=12.156s/it E=-0.134200 var=5.298357
+  0%|          | 19/5000 [02:00<7:37:09,  5.51s/it, Energy=-3.9212+0.0000j ± 0.0084 [σ²=5.8e-01]]
+step=1 dt=5.749s/it E=-0.505969 var=4.044576
+step=2 dt=6.656s/it E=-0.894340 var=6.760958
+step=3 dt=6.575s/it E=-1.196839 var=3.175502
+step=4 dt=5.783s/it E=-1.522581 var=2.396919
+step=5 dt=7.374s/it E=-1.800998 var=2.776740
+step=6 dt=7.165s/it E=-2.084378 var=1.737490
+step=7 dt=7.984s/it E=-2.317434 var=2.043694
+step=8 dt=5.600s/it E=-2.500241 var=1.495558
+step=9 dt=4.030s/it E=-2.683695 var=1.565350
+step=10 dt=5.190s/it E=-2.867676 var=1.268343
+step=11 dt=3.479s/it E=-2.994213 var=1.325191
+step=12 dt=6.542s/it E=-3.119652 var=1.545470
+step=13 dt=5.656s/it E=-3.297247 var=1.787063
+step=14 dt=4.550s/it E=-3.439696 var=1.239539
+step=15 dt=5.836s/it E=-3.551977 var=1.027808
+step=16 dt=5.268s/it E=-3.655172 var=0.778305
+step=17 dt=2.972s/it E=-3.757010 var=0.840491
+step=18 dt=3.262s/it E=-3.851851 var=0.739100
+step=19 dt=8.466s/it E=-3.921206 var=0.578658
