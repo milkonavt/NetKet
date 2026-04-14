@@ -1,0 +1,50 @@
+
+paths:
+  cluster: true
+  measurement_cluster: "/n/home03/onikolaenko/NetKet/Hubbard/measurement"
+  data_cluster: "/n/home03/onikolaenko/NetKet/Hubbard/data"
+  measurement_local: '/Users/alexander/Documents/projects/NetKet/Hubbard/measurement'
+  data_local: '/Users/alexander/Documents/projects/NetKet/Hubbard/data'
+
+system:
+  L: 8
+  t: 1.0
+  U: 8.0
+  n_fermions_per_spin: [28,28]
+  n_bands: 2
+  seed: 0
+
+model:
+  embed_dim: 72
+  n_heads: 12
+  num_layers: 4
+  patch_size: 1
+  transl_invariant: true
+  param_dtype: "float64"
+
+sampling:
+  n_samples: 8192
+  n_chains: 8192
+  d_max: 2
+  n_discard_per_chain: 0
+  chunk_size: 8192
+
+optimizer:
+  learning_rate: 0.03
+  schedule: "cosine_decay"
+  min_learning_rate: 0.003
+
+vmc:
+  diag_shift: 1.0e-4
+  mode: "real"
+  on_the_fly: true
+  use_ntk: true
+  n_iter: 500
+
+logging:
+  save_state_filename: "state_after_VMC.mpack"
+  energy_filename: "energy_U={U:.3f}_L={L:d}_Ne={Ne:d}_iter={n_iter:d}.txt"
+
+wandb:
+    use: true
+    project: "hubbard-netket"

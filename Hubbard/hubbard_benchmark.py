@@ -19,6 +19,7 @@ from flax import linen as nn
 from flax.serialization import to_bytes
 
 from netket.experimental.operator import ParticleNumberAndSpinConservingFermioperator2nd
+from netket.experimental.operator import ParticleNumberConservingFermioperator2nd
 from einops import rearrange
 path_w='/n/home03/onikolaenko/NetKet/Hubbard/measurement'
 path_d='/n/home03/onikolaenko/NetKet/Hubbard/data'
@@ -423,9 +424,9 @@ ham_conn = hubbard_model(t, U, graph,        hi)
 
 
 
-H = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(ham_conn)
-H=ham_conn
+# H = ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd(ham_conn)
 
+H= ParticleNumberConservingFermioperator2nd.from_fermionoperator2nd(ham_conn)
 
 # Define a Metropolis exchange sampler
 N_samples = 8192

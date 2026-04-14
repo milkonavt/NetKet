@@ -4,6 +4,7 @@ from netket.operator.fermion import destroy as c
 from netket.operator.fermion import create as cdag
 from netket.operator.fermion import number as nc
 from netket.operator.spin import sigmaz, sigmap, sigmam
+import netket.experimental as nkx
 
 
 def make_graph_and_hilbert(Lx: int,Ly: int, n_fermions: int, pbc: bool = True):
@@ -14,20 +15,52 @@ def make_graph_and_hilbert(Lx: int,Ly: int, n_fermions: int, pbc: bool = True):
     hi = nk.hilbert.TensorHilbert(hi_f, hi_s)
     return graph, N, hi_f, hi_s, hi
 
+
+
 def build_fermion_hamiltonian(hi_f, hi, graph, t: float, U: float):
-    Hf = 0.0
+    terms = []
+    weights = []
+
+    # SpinOrbitalFermions uses orbital indices 0..hilbert.size-1.
+    # For spinful fermions, NetKet's internal indexing is effectively
+    # hi_f._get_index(site, sz) = spin_block * n_orbitals + site.
+    def orb(site, sz):
+        return hi_f._get_index(site, sz)
 
     for u, v in graph.edges():
         for sz in (+1, -1):
-            Hf += -t * (
-                cdag(hi_f, u, sz) @ c(hi_f, v, sz)
-                + cdag(hi_f, v, sz) @ c(hi_f, u, sz)
-            )
+            iu = orb(u, sz)
+            iv = orb(v, sz)
+
+            # cdag(u,sz) @ c(v,sz)
+            terms.append(((iu, 1), (iv, 0)))
+            weights.append(-t)
+
+            # cdag(v,sz) @ c(u,sz)
+            terms.append(((iv, 1), (iu, 0)))
+            weights.append(-t)
 
     for u in graph.nodes():
-        Hf += U * nc(hi_f, u, +1) @ nc(hi_f, u, -1)
+        iup = orb(u, +1)
+        idn = orb(u, -1)
+
+        # n_up n_dn = c†_up c_up c†_dn c_dn
+        terms.append(((iup, 1), (iup, 0), (idn, 1), (idn, 0)))
+        weights.append(U)
+
+    Hf_generic = nk.operator.FermionOperator2ndJax(
+        hi_f,
+        terms=terms,
+        weights=weights,
+    )
+
+    Hf = nkx.operator.ParticleNumberConservingFermioperator2nd.from_fermionoperator2nd(
+        Hf_generic
+    )
 
     return nk.operator.EmbedOperator(hi, Hf, subspace=0)
+
+
 
 def build_spin_hamiltonian(hi_s, hi, graph, J: float):
     Hs = 0.25 * nk.operator.Heisenberg(
@@ -39,64 +72,7 @@ def build_spin_hamiltonian(hi_s, hi, graph, J: float):
     return nk.operator.EmbedOperator(hi, Hs, subspace=1)
 
 
-def build_local_kondo_matrix() -> np.ndarray:
-    # N_down: Total number of spin-up electrons
-    n_down_vec = np.array([0, 0, 0, 0, 1, 1, 1, 1])
-    # N_up: Total number of spin-down electrons
-    n_up_vec = np.array([0, 0, 1, 1, 0, 0, 1, 1])
 
-    # Number Operators
-    Nup = np.diag(n_up_vec)
-    Ndown = np.diag(n_down_vec)
-
-    tCu = np.zeros((4, 4))
-    tCu[0, 1] = tCu[2, 3] = 1
-    tCdu = np.transpose(tCu)
-
-    tCd = np.zeros((4, 4))
-    tCd[0, 2] = 1
-    tCd[1, 3] = -1
-    tCdd = np.transpose(tCd)
-
-    Cu = np.kron(tCu, np.eye(2))
-    Cdu = np.kron(tCdu, np.eye(2))
-    Cd = np.kron(tCd, np.eye(2))
-    Cdd = np.kron(tCdd, np.eye(2))
-
-    tSz = np.zeros((2, 2))  # spin of local moment
-    tSz[0, 0] = 0.5
-    tSz[1, 1] = -0.5
-
-    tSp = np.zeros((2, 2))
-    tSp[0, 1] = 1.0
-
-    tSm = np.zeros((2, 2))
-    tSm[1, 0] = 1.0
-
-    Sz = np.kron(np.eye(4), tSz)
-    Sp = np.kron(np.eye(4), tSp)
-    Sm = np.kron(np.eye(4), tSm)
-
-    Sze = np.diag(0.5 * (n_up_vec - n_down_vec))
-    Spe = np.dot(Cdu, Cd)
-    Sme = np.dot(Cdd, Cu)
-    Sxe = 0.5 * (Sp + Sm)
-    Sye = -0.5j * (Sp - Sm)
-
-    SdotS = np.matmul(Sz, Sze) + 0.5 * np.matmul(Sp, Sme) + 0.5 * np.matmul(Sm, Spe)
-
-    return SdotS
-
-
-
-def build_kondo_hamiltonian(hi, graph, Jk: float, SdotS: np.ndarray):
-    Hk = nk.operator.LocalOperator(hi)
-    N = graph.n_nodes
-
-    for i in graph.nodes():
-        Hk += nk.operator.LocalOperator(hi, [Jk*SdotS], [[0+i, N+i,2*N+i]])
-
-    return Hk
 
 
 def build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk: float):
@@ -133,13 +109,119 @@ def build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk: float):
 
 
 
+# def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
+#     Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
+#
+#     # Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
+#     # SdotS = build_local_kondo_matrix()
+#     # Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
+#     #
+#     # H = Hs_big + Hf_big + Hk
+#
+#     H = Hf_big
+#
+#     return H
+
+
+#####New Method $
+
+
+def build_fermion_hamiltonian_subspace(hi_f, graph, t: float, U: float):
+    terms = []
+    weights = []
+
+    def orb(site, sz):
+        return hi_f._get_index(site, sz)
+
+    for u, v in graph.edges():
+        for sz in (+1, -1):
+            iu = orb(u, sz)
+            iv = orb(v, sz)
+
+            terms.append(((iu, 1), (iv, 0)))
+            weights.append(-t)
+
+            terms.append(((iv, 1), (iu, 0)))
+            weights.append(-t)
+
+    for u in graph.nodes():
+        iup = orb(u, +1)
+        idn = orb(u, -1)
+
+        terms.append(((iup, 1), (iup, 0), (idn, 1), (idn, 0)))
+        weights.append(U)
+
+    Hf_generic = nk.operator.FermionOperator2ndJax(
+        hi_f,
+        terms=terms,
+        weights=weights,
+    )
+
+    Hf = nkx.operator.ParticleNumberConservingFermioperator2nd.from_fermionoperator2nd(
+        Hf_generic
+    )
+    return Hf
+
+def build_spin_hamiltonian_subspace(hi_s, graph, J: float):
+    return 0.25 * nk.operator.Heisenberg(
+        hilbert=hi_s,
+        graph=graph,
+        J=J,
+        sign_rule=False,
+    )
+
+def build_kondo_hamiltonian_full(hi_f, hi_s, hi, graph, Jk: float):
+    Hk = nk.operator.LocalOperator(hi)
+
+    for i in graph.nodes():
+        s_e_z = 0.5 * (nc(hi_f, i, +1) - nc(hi_f, i, -1))
+        s_e_p = cdag(hi_f, i, +1) @ c(hi_f, i, -1)
+        s_e_m = cdag(hi_f, i, -1) @ c(hi_f, i, +1)
+
+        S_z = 0.5 * sigmaz(hi_s, i)
+        S_p = sigmap(hi_s, i)
+        S_m = sigmam(hi_s, i)
+
+        s_e_z_big = nk.operator.EmbedOperator(hi, s_e_z, subspace=0)
+        s_e_p_big = nk.operator.EmbedOperator(hi, s_e_p, subspace=0)
+        s_e_m_big = nk.operator.EmbedOperator(hi, s_e_m, subspace=0)
+
+        S_z_big = nk.operator.EmbedOperator(hi, S_z, subspace=1)
+        S_p_big = nk.operator.EmbedOperator(hi, S_p, subspace=1)
+        S_m_big = nk.operator.EmbedOperator(hi, S_m, subspace=1)
+
+        Hk += Jk * (
+                S_z_big @ s_e_z_big
+                + 0.5 * S_p_big @ s_e_m_big
+                + 0.5 * S_m_big @ s_e_p_big
+        )
+
+    return Hk
+
+from split_hamiltonian import SplitKondoHamiltonian
+
+
 def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
-    Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
+    Hf = build_fermion_hamiltonian_subspace(hi_f, graph, t=t, U=U)
+    Hs = build_spin_hamiltonian_subspace(hi_s, graph, J=J)
+    Hk = build_kondo_hamiltonian_full(hi_f, hi_s, hi, graph, Jk=Jk)
 
-    # Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
-    # SdotS = build_local_kondo_matrix()
-    # Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
-    #
-    # H = Hs_big + Hf_big + Hk
+    return SplitKondoHamiltonian(
+        hilbert=hi,
+        hi_f=hi_f,
+        hi_s=hi_s,
+        Hf=Hf
+    )
 
-    return Hf_big
+# def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
+#     Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
+#
+#     # Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
+#     # SdotS = build_local_kondo_matrix()
+#     # Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
+#     #
+#     # H = Hs_big + Hf_big + Hk
+#
+#     H = Hf_big
+#
+#     return H
