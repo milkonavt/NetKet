@@ -1,17 +1,14 @@
+
 import os
 os.environ["NETKET_EXPERIMENTAL_SHARDING"] = "1"
 
-import time
-import datetime
-from functools import partial
-from pathlib import Path
-from typing import Any
-
 import jax
 jax.distributed.initialize()
-import timeit
 
-
+import time
+import datetime
+from pathlib import Path
+from typing import Any
 
 import wandb
 import yaml
@@ -20,7 +17,7 @@ import numpy as np
 import netket as nk
 import optax
 
-from Embedding import Embed, FMHA, Encoder, ViT
+from Embedding import  ViT
 
 from flax.serialization import to_bytes
 from netket.operator.fermion import destroy as c
@@ -28,7 +25,7 @@ from netket.operator.fermion import create as cdag
 from netket.operator.fermion import number as nc
 from netket.experimental.operator import ParticleNumberConservingFermioperator2nd
 from build_hamiltonian import HubbardHamiltonian
-
+from measure import do_measure
 def is_main_process():
     return jax.process_index() == 0
 
@@ -67,11 +64,6 @@ def maybe_init_wandb(cfg: dict):
             config=cfg,
         )
 
-
-def maybe_log_wandb(cfg: dict, payload: dict):
-    use_wandb = cfg.get("wandb", {}).get("use", False)
-    if use_wandb and is_main_process():
-        wandb.log(payload)
 
 
 def shifted_cosine_decay(init_value, decay_steps, min_value=None):
@@ -118,13 +110,12 @@ def make_wb_callback(n_sites: int, lr_schedule, cfg: dict):
 
         now = time.perf_counter()
         dt = now - last_time
-        total_time = now - start_time
+
+    
         last_time = now
 
         e = log_data["Energy"]
 
-        inst_speed = 1.0 / dt if dt > 0 else 0.0
-        avg_speed = (step + 1) / total_time if total_time > 0 else 0.0
 
         if is_main_process():
             msg = (
@@ -186,15 +177,6 @@ def build_hubbard_hamiltonian(
     return ParticleNumberConservingFermioperator2nd.from_fermionoperator2nd(
         ham_jax
     )
-
-
-@partial(jax.vmap, in_axes=(None, 0, None), out_axes=1)
-@partial(jax.vmap, in_axes=(None, None, 0), out_axes=1)
-def roll2d(spins, i, j):
-    side = int(spins.shape[-1] ** 0.5)
-    spins = spins.reshape(spins.shape[0], side, side)
-    spins = jnp.roll(jnp.roll(spins, i, axis=-2), j, axis=-1)
-    return spins.reshape(spins.shape[0], -1)
 
 
 def build_model(cfg: dict, Ne: int, Ns: int) -> ViT:
@@ -273,10 +255,13 @@ def run():
         hi,
         graph=graph,
         d_max=sampler_cfg["d_max"],
-        n_chains=sampler_cfg["n_chains"],
+        n_chains=sampler_cfg["n_chains"]
     )
 
+
     optimizer, lr_schedule = make_optimizer(cfg)
+    print("sweep_size =", sampler.sweep_size)
+    print("hi.size =", hi.size)
 
     key, subkey = jax.random.split(key, 2)
     vstate = nk.vqs.MCState(
@@ -289,8 +274,10 @@ def run():
         chunk_size=sampler_cfg["chunk_size"],
     )
 
-    # print(f"expectation value = {vstate.expect(H)}")
-    # print(timeit.timeit(lambda: vstate.expect(H), number=10))
+    
+    shapes = jax.tree.map(lambda x: x.shape, vstate.parameters)
+    
+
     n_params = nk.jax.tree_size(vstate.parameters)
     if is_main_process():
         print("Number of parameters =", n_params, flush=True)
@@ -313,55 +300,75 @@ def run():
     vmc.run(
         n_iter=n_iter,
         out=log,
-        callback=callback,
+        callback=callback
     )
+
+
 
     energy_history = np.asarray(log.data["Energy"]["Mean"].real)
     full_energy = energy_history[-1]
     runtime = time.time() - total_start_time
 
+    model_cfg = cfg["model"]
+
+    embed_dim = model_cfg["embed_dim"]
+    n_heads = model_cfg["n_heads"]
+    num_layers = model_cfg["num_layers"]
+
     if is_main_process():
-        config_filename = (
-            f"{output_dir}/config_"
+        print("Run ended")
+        print("saving the state")
+        common_tag = (
             f"t={t:.3f}_U={U:.3f}_"
-            f"L={L:d}_Ne={Ne:d}_iter={n_iter:d}.yaml"
+            f"L={L:d}_Ne={Ne:d}_iter={n_iter:d}_"
+            f"embed={embed_dim:d}_heads={n_heads:d}_layers={num_layers:d}_seed={seed:d}"
         )
+
+        config_filename = output_dir / f"config_{common_tag}.yaml"
 
         with open(config_filename, "w") as f:
             yaml.dump(cfg, f)
 
-        state_filename = (
-            f"{output_dir}/state_after_VMC_"
-            f"t={t:.3f}_U={U:.3f}_"
-            f"L={L:d}_Ne={Ne:d}_iter={n_iter:d}.txt"
-        )
+        # state_filename = output_dir / f"state_after_VMC_{common_tag}.mpack"
+        #
+        # with open(state_filename, "wb") as file:
+        #     file.write(to_bytes(vstate))
+        # print("state saved")
 
-        with open(state_filename, "wb") as file:
-            file.write(to_bytes(vstate))
-
-        energy_filename = (
-            f"{output_dir}/energy_"
-            f"t={t:.3f}_U={U:.3f}_"
-            f"L={L:d}_Ne={Ne:d}_iter={n_iter:d}.txt"
-        )
-        np.savetxt(energy_filename, energy_history)
 
         print(f"Optimized energy : {full_energy}")
         print(f"number of parameters : {int(n_params)}")
         print("total time cost is", runtime)
 
-    maybe_log_wandb(
-        cfg,
-        {
-            "final_energy": float(full_energy),
-            "final_energy_per_site": float(full_energy / N),
-            "n_parameters": int(n_params),
-            "runtime_sec": float(runtime),
-        },
-    )
 
+
+
+
+    
+
+    order = cfg.get("observables", {}).get("order", [])
+    path_w = output_dir
+
+    do_measure(
+        order,
+        vstate,
+        H,
+        path_w,
+        U,
+        L,
+        Ne,
+        n_iter,
+        graph,
+        hi,
+        embed_dim,
+        n_heads,
+        num_layers,
+        seed,
+    )
+    
     if cfg.get("wandb", {}).get("use", False) and is_main_process():
         wandb.finish()
+       
 
 
 if __name__ == "__main__":

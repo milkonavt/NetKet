@@ -1,12 +1,10 @@
 import os
 os.environ["NETKET_EXPERIMENTAL_SHARDING"] = "1"
-
-import jax
-jax.distributed.initialize()
-
 import yaml
 import sys
 import time
+import jax
+jax.distributed.initialize()
 
 import wandb
 import jax.numpy as jnp
@@ -16,7 +14,7 @@ import numpy as np
 import flax
 import optax
 
-from kondo_hamiltonian import make_graph_and_hilbert, build_hamiltonian
+from kondo_hamiltonian_1 import make_graph_and_hilbert, build_hamiltonian
 from Embedding import Embed, FMHA, Encoder, ViT
 from sampler_rules import make_sz0_initial_states, KondoFlipRule, IdentityRule
 
@@ -147,7 +145,6 @@ def main():
 
     key = jax.random.key(conf.seed)
     trial_state = hi.random_state(key, size=5)
-    print("J = = ",conf.chunk_size)
 
     H = build_hamiltonian(
         hi_f,
@@ -225,17 +222,13 @@ def main():
     if is_main_process():
         print(f"{log_psi.shape = }")
 
-
     rule_f_sub = nk.sampler.rules.FermionHopRule(
         hi_f,
         graph=graph,
         d_max=conf.d_max,
     )
     rule_id_s = IdentityRule()
-
     rule_f = nk.sampler.rules.TensorRule(hi, (rule_f_sub, rule_id_s))
-
-
 
     rule_id_f = IdentityRule()
     rule_s_sub = nk.sampler.rules.ExchangeRule(
@@ -251,16 +244,11 @@ def main():
         probabilities=conf.rule_probabilities,
     )
 
-
     sampler = nk.sampler.MetropolisSampler(
         hi,
         rule=rule_all,
-        n_chains=conf.n_chains,sweep_size=N
+        n_chains=conf.n_chains,
     )
-
-    print("sweep_size =", sampler.sweep_size)
-    print("hi.size =", hi.size)
-
 
     def shifted_cosine_decay(init_value, decay_steps, min_value=None):
         if min_value is None:
@@ -288,25 +276,12 @@ def main():
         chunk_size=conf.chunk_size,
     )
 
-    # sigma0 = make_sz0_initial_states(
-    #     N=N,
-    #     n_fermions=conf.Ne,
-    #     n_chains=sampler.n_chains,
-    #     seed=conf.init_seed,
-    # )
-    # vstate.sampler_state = vstate.sampler_state.replace(σ=sigma0)
-
-    sigma_ref = vstate.sampler_state.σ
-
     sigma0 = make_sz0_initial_states(
         N=N,
         n_fermions=conf.Ne,
         n_chains=sampler.n_chains,
         seed=conf.init_seed,
     )
-
-    sigma0 = jax.device_put(sigma0, sigma_ref.sharding)
-
     vstate.sampler_state = vstate.sampler_state.replace(σ=sigma0)
 
     N_params = nk.jax.tree_size(vstate.parameters)
@@ -371,6 +346,14 @@ def main():
 
 
 
+
+    # maybe_log_wandb(
+    #     {
+    #         "final_energy": float(full_energy),
+    #         "n_parameters": int(N_params),
+    #         "runtime": runtime,
+    #     }
+    # )
 
 
 if __name__ == "__main__":

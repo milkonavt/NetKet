@@ -16,7 +16,7 @@ export WANDB_BASE_URL="https://api.wandb.ai"
 PROJECT_DIR=/n/home03/onikolaenko/NetKet/Kondo_model/
 DATA=/n/home03/onikolaenko/NetKet/Kondo_model/data/
 
-program_to_run=kondo_run.py
+program_to_run=kondo_run_1.py
 outfile_run=info_file
 
 

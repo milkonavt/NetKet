@@ -16,9 +16,9 @@ system:
 
 hamiltonian:
   t: 1.0
-  U: 0.0
-  Jk: 1.0
-  J: 0.5
+  U: 8.0
+  Jk: 0.0
+  J: 0.0
 
 model:
   n_heads: 12
@@ -29,10 +29,10 @@ model:
 
 
 sampler:
-  n_samples: 8192
-  n_chains: 8192
+  n_samples: 2048
+  n_chains: 2048
   n_discard_per_chain: 0
-  chunk_size: 8192
+  chunk_size: 512
   d_max: 2
   rule_probabilities: [0.33333333, 0.33333333, 0.33333333]
 
@@ -46,7 +46,7 @@ optimizer:
 training:
   seed: 0
   init_seed: 1234
-  n_iter: 3000
+  n_iter: 500
 
 wandb:
   project: "kondo-netket"

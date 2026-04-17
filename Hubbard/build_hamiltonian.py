@@ -10,6 +10,7 @@ import netket.experimental as nkx
 from netket.operator import AbstractOperator
 import jax.numpy as jnp
 import time
+import jax
 
 def build_fermion_hamiltonian_subspace(hi_f, graph, t: float, U: float):
     terms = []
@@ -80,15 +81,21 @@ class HubbardHamiltonian(AbstractOperator):
 
         return xp_full, mel_f
 
-
 @nk.vqs.get_local_kernel_arguments.dispatch
 def get_local_kernel_arguments(vstate: nk.vqs.MCState, op: HubbardHamiltonian):
-
+    time0 = time.time()
     sigma = vstate.samples.reshape(-1, vstate.hilbert.size)
-    time1=time.time()
+    jax.block_until_ready(sigma)
+    time1 = time.time()
+    print(f"sampling: {time1 - time0}")
+
     xp_full, mel_f = op.fermion_connected_only(sigma)
-    time2=time.time()
-    print(f"computing time: {time2-time1}")
+    jax.block_until_ready(xp_full)
+    time2 = time.time()
+    print(f"computing elements: {time2-time1}")
+    print(f"xp_full: {xp_full.shape}")
+    print(f"mel_f: {mel_f.shape}")
+
     return sigma, (xp_full, mel_f)
 
 
@@ -97,7 +104,6 @@ def get_local_kernel(vstate: nk.vqs.MCState, op: HubbardHamiltonian, chunk_size)
     def local_kernel(logpsi, pars, sigma, extra_args, chunk_size=None):
 
         xp_full, mel_f = extra_args
-        print(f"xp_full: {xp_full.shape}")
 
         logpsi_sigma = logpsi(pars, sigma)
 
@@ -110,12 +116,9 @@ def get_local_kernel(vstate: nk.vqs.MCState, op: HubbardHamiltonian, chunk_size)
             chunk_size=chunk_size,
         )(pars, xp_flat)
 
-        # print(f"shape={logpsi_xp_flat.shape}")
-        # print(f"chunksize={chunk_size}")
-        # print(f"mel={mel_f.shape}")
-        # exit()
 
         logpsi_xp = logpsi_xp_flat.reshape(B, Kf)
+
 
         print(f"logpsi: {logpsi_xp.shape}")
 
@@ -123,7 +126,6 @@ def get_local_kernel(vstate: nk.vqs.MCState, op: HubbardHamiltonian, chunk_size)
             mel_f * jnp.exp(logpsi_xp - logpsi_sigma[:, None]),
             axis=1,
         )
-
 
         return loc_energy
 

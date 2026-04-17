@@ -107,16 +107,20 @@ def build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk: float):
 
     return Hk
 
-def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
-    Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
-
-    Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
-    Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
-
-    H = Hs_big + Hf_big + Hk
 
 
-    return H
+# def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
+#     Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
+#
+#     # Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
+#     # SdotS = build_local_kondo_matrix()
+#     # Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
+#     #
+#     # H = Hs_big + Hf_big + Hk
+#
+#     H = Hf_big
+#
+#     return H
 
 
 #####New Method $
@@ -194,18 +198,30 @@ def build_kondo_hamiltonian_full(hi_f, hi_s, hi, graph, Jk: float):
 
     return Hk
 
-from split_hamiltonian import SplitKondoHamiltonian
+from split_hamiltonian_1 import SplitKondoHamiltonian
 
+
+def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
+    Hf = build_fermion_hamiltonian_subspace(hi_f, graph, t=t, U=U)
+    Hs = build_spin_hamiltonian_subspace(hi_s, graph, J=J)
+    Hk = build_kondo_hamiltonian_full(hi_f, hi_s, hi, graph, Jk=Jk)
+
+    return SplitKondoHamiltonian(
+        hilbert=hi,
+        hi_f=hi_f,
+        hi_s=hi_s,
+        Hf=Hf
+    )
 
 # def build_hamiltonian(hi_f, hi_s, hi, graph, t, U, J, Jk):
-#     Hf = build_fermion_hamiltonian_subspace(hi_f, graph, t=t, U=U)
-#     Hs = build_spin_hamiltonian_subspace(hi_s, graph, J=J)
-#     Hk = build_kondo_hamiltonian_full(hi_f, hi_s, hi, graph, Jk=Jk)
+#     Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
 #
-#     return SplitKondoHamiltonian(
-#         hilbert=hi,
-#         hi_f=hi_f,
-#         hi_s=hi_s,
-#         Hf=Hf
-#     )
-
+#     # Hs_big = build_spin_hamiltonian(hi_s, hi, graph, J=J)
+#     # SdotS = build_local_kondo_matrix()
+#     # Hk = build_kondo_hamiltonian_operator_based(hi_f, hi_s, hi, graph, Jk=Jk)
+#     #
+#     # H = Hs_big + Hf_big + Hk
+#
+#     H = Hf_big
+#
+#     return H

@@ -92,11 +92,19 @@ class SplitKondoHamiltonian(AbstractOperator):
 
 @nk.vqs.get_local_kernel_arguments.dispatch
 def get_local_kernel_arguments(vstate: nk.vqs.MCState, op: SplitKondoHamiltonian):
-    time0 = time.time()
-    sigma = vstate.samples.reshape(-1, vstate.hilbert.size)
+    t0 = time.time()
+    samples = vstate.samples
+    jax.block_until_ready(samples)
+    t1 = time.time()
+
+    sigma = samples.reshape(-1, vstate.hilbert.size)
     jax.block_until_ready(sigma)
-    time1=time.time()
-    print(f"computing time sigma: {time1 - time0}")
+    t2 = time.time()
+
+    print("sampling:", t1 - t0)
+    print("reshape:", t2 - t1)
+
+    time1 = time.time()
     xp_full, mel_f = op.fermion_connected_only(sigma)
     jax.block_until_ready(xp_full)
     time2=time.time()
@@ -131,7 +139,6 @@ def get_local_kernel(vstate: nk.vqs.MCState, op: SplitKondoHamiltonian, chunk_si
             mel_f * jnp.exp(logpsi_xp - logpsi_sigma[:, None]),
             axis=1,
         )
-
 
         return val
 
