@@ -1,4 +1,3 @@
-
 import os
 os.environ["NETKET_EXPERIMENTAL_SHARDING"] = "1"
 
@@ -8,24 +7,27 @@ jax.distributed.initialize()
 import time
 import datetime
 from pathlib import Path
-from typing import Any
 
 import wandb
 import yaml
-import jax.numpy as jnp
 import numpy as np
 import netket as nk
 import optax
 
 from Embedding import  ViT
 
-from flax.serialization import to_bytes
 from netket.operator.fermion import destroy as c
 from netket.operator.fermion import create as cdag
 from netket.operator.fermion import number as nc
 from netket.experimental.operator import ParticleNumberConservingFermioperator2nd
 from build_hamiltonian import HubbardHamiltonian
 from measure import do_measure
+
+# ------------------------------------------------------------
+# Utility
+# ------------------------------------------------------------
+
+
 def is_main_process():
     return jax.process_index() == 0
 
@@ -33,18 +35,6 @@ def is_main_process():
 def load_config(path: str = "config.yaml") -> dict:
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
-
-
-def get_dtype(dtype_name: str) -> Any:
-    mapping = {
-        "float32": jnp.float32,
-        "float64": jnp.float64,
-        "complex64": jnp.complex64,
-        "complex128": jnp.complex128,
-    }
-    if dtype_name not in mapping:
-        raise ValueError(f"Unsupported dtype '{dtype_name}'.")
-    return mapping[dtype_name]
 
 
 def maybe_init_wandb(cfg: dict):
@@ -101,17 +91,14 @@ def make_optimizer(cfg: dict):
 
 def make_wb_callback(n_sites: int, lr_schedule, cfg: dict):
     last_time = time.perf_counter()
-    start_time = last_time
-
-    def wb_callback(step, log_data, driver):
+    
+    def wb_callback(step, log_data):
         nonlocal last_time
 
         current_lr = float(lr_schedule(step))
 
         now = time.perf_counter()
-        dt = now - last_time
-
-    
+        dt = now - last_time    
         last_time = now
 
         e = log_data["Energy"]
@@ -144,6 +131,9 @@ def make_wb_callback(n_sites: int, lr_schedule, cfg: dict):
 
     return wb_callback
 
+# ------------------------------------------------------------
+#  square lattice + fundamental local Hilbert space
+# ------------------------------------------------------------
 
 def make_graph_and_hilbert(L: int, n_fermions_per_spin: tuple[int, int]):
     graph = nk.graph.Square(L)
@@ -181,7 +171,7 @@ def build_hubbard_hamiltonian(
 
 def build_model(cfg: dict, Ne: int, Ns: int) -> ViT:
     model_cfg = cfg["model"]
-    dtype = get_dtype(model_cfg.get("param_dtype", "float64"))
+    
 
     return ViT(
         num_layers=model_cfg["num_layers"],
@@ -192,9 +182,12 @@ def build_model(cfg: dict, Ne: int, Ns: int) -> ViT:
         Ne=Ne,
         Ns=Ns,
         n_bands=cfg["system"]["n_bands"],
-        param_dtype=dtype,
+        param_dtype="float64",
     )
 
+# ------------------------------------------------------------
+# Main
+# ------------------------------------------------------------
 
 def run():
     total_start_time = time.time()
@@ -273,10 +266,7 @@ def run():
         variables=params,
         chunk_size=sampler_cfg["chunk_size"],
     )
-
-    
-    shapes = jax.tree.map(lambda x: x.shape, vstate.parameters)
-    
+  
 
     n_params = nk.jax.tree_size(vstate.parameters)
     if is_main_process():
@@ -303,7 +293,9 @@ def run():
         callback=callback
     )
 
-
+# ------------------------------------------------------------
+# Measurement and saving results
+# ------------------------------------------------------------
 
     energy_history = np.asarray(log.data["Energy"]["Mean"].real)
     full_energy = energy_history[-1]

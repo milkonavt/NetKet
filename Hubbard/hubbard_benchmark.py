@@ -36,10 +36,10 @@ total_start_time = time.time()
 now = datetime.datetime.now()
 
 
-L = 8  # Side of the square
+L = 4  # Side of the square
 t=1;
 U=8
-n_fermions_per_spin = (28,28)
+n_fermions_per_spin = (4,4)
 
 
 graph = nk.graph.Square(L)
@@ -56,7 +56,7 @@ hi = nk.hilbert.SpinOrbitalFermions(N, s=1 / 2, n_fermions_per_spin=n_fermions_p
 
 seed = 0
 key = jax.random.key(seed)
-trial_state=hi.random_state(key,size=1)
+trial_state=hi.random_state(key,size=3)
 print("trial_state=", trial_state)
 
 
@@ -102,13 +102,17 @@ class Embed(nn.Module):
 
         # stack per site: (batch, N, 2)
         bits = jnp.stack([up, down], axis=-1)
+        print(f"{bits.shape = }") # (batch, n_sites, n_bands)
+        print(f"{bits = }")
 
 
         # build bit weights [1,2,...,2^(n_bands-1)]
         weights = (2 ** jnp.arange(self.n_bands)).astype(jnp.int32)  # shape (n_bands,)
+        print(f"{weights = }")
 
         # compute integer token per site in [0, 2**n_bands - 1]
         tokens = jnp.sum(bits * weights, axis=-1).astype(jnp.int32)  # (batch, n_sites)
+        print(f"{tokens = }")
 
         # lookup embeddings: returns (batch, n_sites, d_model)
         embedded = self.embed(tokens)

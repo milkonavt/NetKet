@@ -1,0 +1,19 @@
+********************************************************************************
+******************** New calculation started. The local time is: ********************
+System: 8x8 lattice with 64 sites
+Fermions: 56
+Parameters: t=1.0, U=8.0
+
+embedded_configs.shape = (5, 64, 72)
+attention_vectors.shape = (5, 64, 72)
+Multihead attention shape = (5, 64, 72)
+log_psi.shape = (5,)
+Number of parameters = 730272
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+  0%|          | 0/500 [00:00<?, ?it/s]/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_fermion2nd/jax.py:566: UserWarning:
+WARNING: Initializing `netket.operator.FermionOperator2nd` for a Hilbert space with a fixed number of fermions.
+Consider using `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd` to reduce the number of connected elements and
+considerably reduce the computational cost.
+You can convert this operator by calling `netket.experimental.operator.ParticleNumberAndSpinConservingFermioperator2nd.from_fermionoperator2nd`.
+
+  super()._setup(self)

@@ -1,0 +1,20 @@
+********************************************************************************
+******************** New calculation started. The local time is: ********************
+System: 4x4 lattice with 16 sites
+Fermions: 14
+Parameters: t=1.0, U=8.0
+
+embedded_configs.shape = (5, 16, 56)
+attention_vectors.shape = (5, 16, 56)
+Multihead attention shape = (5, 16, 56)
+log_psi.shape = (5,)
+Number of parameters = 89744
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+  0%|          | 0/500 [00:32<?, ?it/s, Energy=18.12-0.00j ± 0.18 [σ²=1.3e+02]]
+computing time: 4.448437213897705
+xp_full: (4096, 57, 48)
+logpsi: (4096, 57)
+loc energies time: 11.229763269424438
+SR time: 14.954088926315308
+yshape=(233472,)
+step=0 dt=26.593s/it logpsi=5.785933s E=18.119801 var=129.912751

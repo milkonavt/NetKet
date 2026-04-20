@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 328, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 117, in main
+    H = build_hamiltonian(
+        ^^^^^^^^^^^^^^^^^^
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_hamiltonian.py", line 143, in build_hamiltonian
+    Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_hamiltonian.py", line 29, in build_fermion_hamiltonian
+    Hf = nkx.operator.FermiHubbardJax(
+         ^^^
+NameError: name 'nkx' is not defined. Did you mean: 'nk'?

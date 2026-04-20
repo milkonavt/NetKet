@@ -1,0 +1,44 @@
+paths:
+  cluster: true
+  measurement_cluster: "/n/home03/onikolaenko/NetKet/SUN/measurement"
+  data_cluster: "/n/home03/onikolaenko/NetKet/SUN/data"
+  measurement_local: "/Users/alexander/Documents/projects/NetKet/SUN/measurement"
+  data_local: "/Users/alexander/Documents/projects/NetKet/SUN/data"
+
+system:
+  L: 10
+  N_color: 5
+  J: 1.0
+  pbc: true
+  seed: 1
+
+model:
+  embed_dim: 72
+  n_heads: 12
+  num_layers: 4
+  patch_size: 1
+  transl_invariant: true
+  param_dtype: "float64"
+
+sampling:
+  n_samples: 2048
+  n_chains: 512
+  d_max: 2
+  n_discard_per_chain: 0
+  chunk_size: 2048
+
+optimizer:
+  learning_rate: 0.01
+  schedule: "cosine_decay"
+  min_learning_rate: 0.003
+
+vmc:
+  diag_shift: 1.0e-4
+  mode: "complex"
+  on_the_fly: true
+  use_ntk: true
+  n_iter: 10000
+
+wandb:
+  use: true
+  project: "sun-square-netket"

@@ -1,0 +1,21 @@
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_setup.py:_flush():81] Current SDK version is 0.25.1
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_setup.py:_flush():81] Configure stats pid to 14089
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_init.py:setup_run_log_directory():717] Logging user logs to /Users/alexander/Documents/projects/NetKet/Hubbard/wandb/run-20260413_175338-klrvur69/logs/debug.log
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_init.py:setup_run_log_directory():718] Logging internal logs to /Users/alexander/Documents/projects/NetKet/Hubbard/wandb/run-20260413_175338-klrvur69/logs/debug-internal.log
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_init.py:init():844] calling init triggers
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_init.py:init():849] wandb.init called with sweep_config: {}
+config: {'paths': {'cluster': True, 'measurement_cluster': '/n/home03/onikolaenko/NetKet/Hubbard/measurement', 'data_cluster': '/n/home03/onikolaenko/NetKet/Hubbard/data', 'measurement_local': '/Users/alexander/Documents/projects/NetKet/Hubbard/measurement', 'data_local': '/Users/alexander/Documents/projects/NetKet/Hubbard/data'}, 'system': {'L': 8, 't': 1.0, 'U': 8.0, 'n_fermions_per_spin': [28, 28], 'n_bands': 2, 'seed': 0}, 'model': {'embed_dim': 72, 'n_heads': 12, 'num_layers': 4, 'patch_size': 1, 'transl_invariant': True, 'param_dtype': 'float64'}, 'sampling': {'n_samples': 8192, 'n_chains': 8192, 'd_max': 2, 'n_discard_per_chain': 0, 'chunk_size': 8192}, 'optimizer': {'learning_rate': 0.03, 'schedule': 'cosine_decay', 'min_learning_rate': 0.003}, 'vmc': {'diag_shift': 0.0001, 'mode': 'real', 'on_the_fly': True, 'use_ntk': True, 'n_iter': 500}, 'logging': {'save_state_filename': 'state_after_VMC.mpack', 'energy_filename': 'energy_U={U:.3f}_L={L:d}_Ne={Ne:d}_iter={n_iter:d}.txt'}, 'wandb': {'use': True, 'project': 'hubbard-netket'}, '_wandb': {}}
+2026-04-13 17:53:38,233 INFO    MainThread:14089 [wandb_init.py:init():892] starting backend
+2026-04-13 17:53:39,159 INFO    MainThread:14089 [wandb_init.py:init():895] sending inform_init request
+2026-04-13 17:53:39,180 INFO    MainThread:14089 [wandb_init.py:init():903] backend started and connected
+2026-04-13 17:53:39,182 INFO    MainThread:14089 [wandb_init.py:init():973] updated telemetry
+2026-04-13 17:53:39,197 INFO    MainThread:14089 [wandb_init.py:init():997] communicating run to backend with 90.0 second timeout
+2026-04-13 17:53:39,820 INFO    MainThread:14089 [wandb_init.py:init():1042] starting run threads in backend
+2026-04-13 17:53:39,975 INFO    MainThread:14089 [wandb_run.py:_console_start():2524] atexit reg
+2026-04-13 17:53:39,975 INFO    MainThread:14089 [wandb_run.py:_redirect():2373] redirect: wrap_raw
+2026-04-13 17:53:39,975 INFO    MainThread:14089 [wandb_run.py:_redirect():2442] Wrapping output streams.
+2026-04-13 17:53:39,975 INFO    MainThread:14089 [wandb_run.py:_redirect():2465] Redirects installed.
+2026-04-13 17:53:39,983 INFO    MainThread:14089 [wandb_init.py:init():1082] run started, returning control to user process
+2026-04-13 17:53:39,988 INFO    wandb-AsyncioManager-main:14089 [service_client.py:_forward_responses():134] Reached EOF.
+2026-04-13 17:53:39,988 INFO    wandb-AsyncioManager-main:14089 [mailbox.py:close():155] Closing mailbox, abandoning 1 handles.

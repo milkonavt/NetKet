@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH -p gpu,gpu_h200
 #SBATCH --mem-per-gpu=240G
-#SBATCH -t 0-03:00:00
+#SBATCH -t 0-05:00:00
 #SBATCH --output=/n/home03/onikolaenko/NetKet/Hubbard/logs/slurm-%j.out
 
 

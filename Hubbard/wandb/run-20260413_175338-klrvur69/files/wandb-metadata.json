@@ -1,0 +1,17 @@
+{
+  "os": "macOS-13.4-arm64-arm-64bit",
+  "python": "CPython 3.12.2",
+  "startedAt": "2026-04-13T21:53:38.231286Z",
+  "program": "/Users/alexander/Documents/projects/NetKet/Hubbard/hubbard_run.py",
+  "codePath": "Hubbard/hubbard_run.py",
+  "codePathLocal": "hubbard_run.py",
+  "git": {
+    "remote": "https://github.com/milkonavt/NetKet.git",
+    "commit": "62d0ecb009eb0ccab5ddec2d9d9c0726da6c273f"
+  },
+  "email": "nikolajenko14@gmail.com",
+  "root": "/Users/alexander/Documents/projects/NetKet/Hubbard",
+  "host": "Alexanders-MacBook-Pro-2.local",
+  "executable": "/usr/local/bin/python3",
+  "writerId": "mh7iektgs4eud7aqxtq75b6cnzlg2879"
+}

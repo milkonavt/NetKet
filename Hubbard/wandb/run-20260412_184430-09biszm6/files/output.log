@@ -1,0 +1,44 @@
+trial_state = [[0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0]]
+********************************************************************************
+******************** New calculation started. The local time is: 2026-04-12 18:44:30.391979 ********************
+System: 4x4 lattice with 16 sites
+Fermions: 2 spin-up, 2 spin-down
+Parameters: t=1.0, U=8.0
+n_bands=2
+
+log_psi.shape = (1,)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_fermion2nd/base.py:518: OperatorMultiplicationDeprecationWarning:
+The '*' operator for multiplying operators is deprecated and will be removed in a future version.
+
+Please use the '@' operator instead:
+  - Replace: operator1 * operator2
+  - With:    operator1 @ operator2
+
+The '@' operator is Python's standard matrix multiplication operator.
+
+
+-------------------------------------------------------
+For more detailed informations, visit the following link:
+	 https://netket.readthedocs.io/en/latest/api/_generated/errors/netket.errors.OperatorMultiplicationDeprecationWarning.html
+or the list of all common errors and warnings at
+	 https://netket.readthedocs.io/en/latest/api/errors.html
+-------------------------------------------------------
+
+  warnings.warn(OperatorMultiplicationDeprecationWarning())
+Number of parameters = 1912
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+  3%|▎         | 13/500 [01:37<42:42,  5.26s/it, Energy=-4.673+0.000j ± 0.038 [σ²=1.2e+01]] 
+step=0 dt=13.695s/it E=3.432369 var=33.290277
+step=1 dt=12.923s/it E=2.481653 var=33.957069
+step=2 dt=7.938s/it E=1.418427 var=30.981740
+step=3 dt=6.122s/it E=0.425988 var=24.515493
+step=4 dt=7.502s/it E=-0.485706 var=23.892127
+step=5 dt=5.193s/it E=-1.124772 var=21.797421
+step=6 dt=4.771s/it E=-1.816866 var=17.317084
+step=7 dt=6.725s/it E=-2.539697 var=15.593668
+step=8 dt=6.669s/it E=-2.892509 var=14.380156
+step=9 dt=5.000s/it E=-3.402544 var=13.398339
+step=10 dt=4.924s/it E=-3.670389 var=13.682097
+step=11 dt=6.657s/it E=-4.051698 var=11.682470
+step=12 dt=4.015s/it E=-4.383004 var=9.709247
+step=13 dt=5.001s/it E=-4.673439 var=11.558642

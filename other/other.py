@@ -288,3 +288,42 @@ def get_local_kernel_arguments(
     mels = mels.reshape(*sigma_shape[:-1], K)
 
     return sigma, (xp, mels)
+
+
+### constrained hilbert space example
+
+mport jax.numpy as jnp
+import netket as nk
+
+
+class EqualColorConstraint(nk.hilbert.constraint.DiscreteHilbertConstraint):
+    def __init__(self, n_colors: int, n_sites: int):
+        if n_sites % n_colors != 0:
+            raise ValueError(
+                f"Equal color sector requires n_sites % n_colors == 0, "
+                f"got n_sites={n_sites}, n_colors={n_colors}."
+            )
+        self.n_colors = n_colors
+        self.n_sites = n_sites
+        self.target = n_sites // n_colors
+
+    def __call__(self, x):
+        """
+        x shape: (..., n_sites)
+        returns bool mask of shape (...,)
+        """
+        checks = []
+        for c in range(self.n_colors):
+            checks.append(jnp.sum(x == c, axis=-1) == self.target)
+        return jnp.all(jnp.stack(checks, axis=-1), axis=-1)
+
+
+def make_suN_hilbert(n_colors: int, n_sites: int):
+    local_states = nk.utils.StaticRange(0, 1, n_colors)
+    constraint = EqualColorConstraint(n_colors=n_colors, n_sites=n_sites)
+    hi = nk.hilbert.HomogeneousHilbert(
+        local_states,
+        N=n_sites,
+        constraint=constraint,
+    )
+    return hi

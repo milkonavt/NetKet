@@ -104,6 +104,7 @@ def do_measure(
             sz[i] = float(vstate.expect(Sz_op).mean.real)
 
         if is_main_process():
+            print("Sz measurement completed.", flush=True)
             np.savetxt(path_w / f"Sz_{file_tag}.txt", sz)
 
         SS_full = np.zeros((graph.n_nodes, graph.n_nodes), dtype=float)

@@ -351,7 +351,7 @@ key = jax.random.key(seed)
 L = 4
 n_dim = 2
 # J2 = np.float32(sys.argv[1])
-J2=0.5
+J2=0.0
 lattice = nk.graph.Hypercube(length=L, n_dim=n_dim, pbc=True, max_neighbor_order=2)
 
 # Hilbert space of spins on the graph
@@ -377,14 +377,14 @@ print("Exact ground state energy:", E_gs)
 
 # Intiialize the ViT variational wave function
 vit_module = ViT(
-    num_layers=2, d_model=20, n_heads=4, patch_size=1, transl_invariant=True
+    num_layers=1, d_model=60, n_heads=4, patch_size=1, transl_invariant=True
 )
 
 key, subkey = jax.random.split(key)
 params = vit_module.init(subkey, spin_configs)
 
 # Metropolis Local Sampling
-N_samples = 4096
+N_samples = 2048
 sampler = nk.sampler.MetropolisExchange(
     hilbert=hilbert,
     graph=lattice,

@@ -1,0 +1,14 @@
+trial_state = [[0 1 0 1 0 1 1 0 0 0 0 0 1 1 1 0 1 1 0 1 0 1 0 1 0 1 1 0 0 0 0 0]]
+********************************************************************************
+******************** New calculation started. The local time is: 2026-04-13 22:13:31.661103 ********************
+System: 4x4 lattice with 16 sites
+Fermions: 7 spin-up, 7 spin-down
+Parameters: t=1.0, U=8.0
+n_bands=2
+
+log_psi.shape = (1,)
+Number of parameters = 89520
+online_statistics: chain_length=1, exponential moving average window: 50, decay=0.980
+  0%|          | 0/500 [00:00<?, ?it/s]
+computing time: 0.5712199211120605
+loc energies time: 19.11069107055664

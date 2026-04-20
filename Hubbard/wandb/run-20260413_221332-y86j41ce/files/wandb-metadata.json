@@ -1,0 +1,37 @@
+{
+  "os": "macOS-13.4-arm64-arm-64bit",
+  "python": "CPython 3.12.2",
+  "startedAt": "2026-04-14T02:13:32.093419Z",
+  "program": "/Users/alexander/Documents/projects/NetKet/Hubbard/hubbard_run.py",
+  "codePath": "Hubbard/hubbard_run.py",
+  "codePathLocal": "hubbard_run.py",
+  "git": {
+    "remote": "https://github.com/milkonavt/NetKet.git",
+    "commit": "62d0ecb009eb0ccab5ddec2d9d9c0726da6c273f"
+  },
+  "email": "nikolajenko14@gmail.com",
+  "root": "/Users/alexander/Documents/projects/NetKet/Hubbard",
+  "host": "Alexanders-MacBook-Pro-2.local",
+  "executable": "/usr/local/bin/python3",
+  "cpu_count": 10,
+  "cpu_count_logical": 10,
+  "disk": {
+    "/": {
+      "total": "494384795648",
+      "used": "365095821312"
+    }
+  },
+  "memory": {
+    "total": "17179869184"
+  },
+  "apple": {
+    "name": "Apple M2 Pro",
+    "ecpuCores": 4,
+    "pcpuCores": 6,
+    "gpuCores": 16,
+    "memoryGb": 16,
+    "swapTotalBytes": "9663676416",
+    "ramTotalBytes": "17179869184"
+  },
+  "writerId": "w6qrvun7a8x5xjadi8jhbeuhfi90d73l"
+}

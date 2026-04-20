@@ -1,0 +1,47 @@
+model:
+  embed_dim: 42
+  n_heads: 6
+  num_layers: 1
+  param_dtype: float64
+  patch_size: 1
+  transl_invariant: true
+observables:
+  order:
+  - E
+  - NN
+  - CC
+  - SS
+optimizer:
+  learning_rate: 0.03
+  min_learning_rate: 0.003
+  schedule: cosine_decay
+paths:
+  cluster: false
+  data_cluster: /n/home03/onikolaenko/NetKet/Hubbard/data
+  data_local: /Users/alexander/Documents/projects/NetKet/Hubbard/data
+  measurement_cluster: /n/home03/onikolaenko/NetKet/Hubbard/measurement
+  measurement_local: /Users/alexander/Documents/projects/NetKet/Hubbard/measurement
+sampling:
+  chunk_size: 1048
+  d_max: 2
+  n_chains: 1048
+  n_discard_per_chain: 0
+  n_samples: 1048
+system:
+  L: 2
+  U: 2.0
+  n_bands: 2
+  n_fermions_per_spin:
+  - 2
+  - 2
+  seed: 0
+  t: 1.0
+vmc:
+  diag_shift: 0.0001
+  mode: real
+  n_iter: 10
+  on_the_fly: true
+  use_ntk: true
+wandb:
+  project: hubbard-netket
+  use: false

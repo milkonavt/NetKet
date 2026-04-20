@@ -1,0 +1,51 @@
+Traceback (most recent call last):
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 328, in <module>
+    main()
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_run.py", line 117, in main
+    H = build_hamiltonian(
+        ^^^^^^^^^^^^^^^^^^
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_hamiltonian.py", line 144, in build_hamiltonian
+    Hf_big = build_fermion_hamiltonian(hi_f, hi, graph, t=t, U=U)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/alexander/Documents/projects/NetKet/Kondo_model/kondo_hamiltonian.py", line 37, in build_fermion_hamiltonian
+    return nk.operator.EmbedOperator(hi, Hf, subspace=0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_embed/discrete_jax_operator.py", line 49, in __init__
+    super().__init__(hilbert, operator, subspace)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/operator/_embed/base.py", line 150, in __init__
+    self._dtype = operator.dtype
+                  ^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/operator/particle_number_conserving_fermionic/operators.py", line 342, in dtype
+    _, mels = jax.eval_shape(self.get_conn_padded, x)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/operator/particle_number_conserving_fermionic/operators.py", line 364, in get_conn_padded
+    return get_conn_padded_pnc_spin(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/operator/particle_number_conserving_fermionic/kernels.py", line 353, in get_conn_padded_pnc_spin
+    *_, melsij = _get_conn_padded_interaction_up_down(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/jax/_src/numpy/vectorize.py", line 347, in wrapped
+    result = vectorized_func(*squeezed_args)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/jax/_src/numpy/vectorize.py", line 144, in wrapped
+    out = func(*args)
+          ^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/jax/_src/numpy/vectorize.py", line 184, in new_func
+    return func(*args, **kwargs, **static_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/operator/particle_number_conserving_fermionic/kernels.py", line 225, in _get_conn_padded_interaction_up_down
+    (down_occupied,) = jnp.where(x_down, size=nelectron_down)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 2772, in where
+    return nonzero(condition, size=size, fill_value=fill_value)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/jax/_src/numpy/lax_numpy.py", line 3709, in nonzero
+    calculated_size: int = core.concrete_dim_or_error(calculated_size_,
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+jax.errors.ConcretizationTypeError: Abstract tracer value encountered where concrete value is expected: traced array with shape int64[]
+The size argument of jnp.nonzero must be statically specified to use jnp.nonzero within JAX transformations.
+The error occurred while tracing the function _get_conn_padded_interaction_up_down at /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/netket/_src/operator/particle_number_conserving_fermionic/kernels.py:195 for jit. This concrete value was not available in Python because it depends on the value of the argument x_down.
+
+See https://docs.jax.dev/en/latest/errors.html#jax.errors.ConcretizationTypeError
+--------------------
+For simplicity, JAX has removed its internal frames from the traceback of the following exception. Set JAX_TRACEBACK_FILTERING=off to include these.

@@ -1,38 +1,35 @@
 #!/bin/bash 
 
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
-#SBATCH --gres=gpu:4
-#SBATCH -p gpu_h200
-#SBATCH --mem-per-gpu=140G
-#SBATCH -t 0-00:10:00
+#SBATCH --ntasks-per-node=1
+#SBATCH --gres=gpu:1
+#SBATCH -p gpu_test
+#SBATCH --mem-per-gpu=100G
+#SBATCH -t 0-00:30:00
 #SBATCH --output=/n/home03/onikolaenko/NetKet/heisenberg/logs/slurm-%j.out
 
 
-J2=0.5
+export WANDB_API_KEY="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"
+export WANDB_BASE_URL="https://api.wandb.ai"
 
+
+
+PROJECT_DIR=/n/home03/onikolaenko/NetKet/heisenberg/
 DATA=/n/home03/onikolaenko/NetKet/heisenberg/data/
-SCRDIR=/scratch/$USER/$SLURM_JOBID 
-program_to_run=hubbard_benchmark.py
-outfile_run=info_J2$J2
 
-mkdir --parents $SCRDIR 
-mkdir $SCRDIR/data/
+program_to_run=cluster_heis_transformer.py
+outfile_run=info_file
+
 
 
 module load python/3.12.11-fasrc01
-source ~/venvs/netket/bin/activate
+source ~/venvs/netket_developer/bin/activate
 
 
 
-cp $program_to_run $SCRDIR 
-cd $SCRDIR
+cd $PROJECT_DIR
 
-srun python -u $program_to_run $J2>>$DATA/$outfile_run
-
-
-rm $SCRDIR/$program_to_run 
-rm -rf $SCRDIR 
+srun python -u $program_to_run>>$DATA/$outfile_run
 
 
 
